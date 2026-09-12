@@ -315,6 +315,61 @@ button,input,select,textarea {
     color: var(--white);
 }
 
+/* SUBMENÚS DEL CATÁLOGO */
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu > .dropdown-item.dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dropdown-submenu > .dropdown-item.dropdown-toggle::after {
+    margin-left: 10px;
+    transform: rotate(-90deg);
+}
+
+.dropdown-submenu > .dropdown-menu {
+    top: -9px;
+    left: 100%;
+    margin-left: 1px;
+    display: none;
+}
+
+.dropdown-submenu:hover > .dropdown-menu,
+.dropdown-submenu.show > .dropdown-menu {
+    display: block;
+}
+
+@media (max-width: 991.98px) {
+    .dropdown-submenu > .dropdown-menu {
+        position: static;
+        display: none;
+        margin-left: 0;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding-left: 14px;
+        background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    .dropdown-submenu.show > .dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-submenu > .dropdown-item.dropdown-toggle::after {
+        transform: rotate(0deg);
+        transition: transform 0.2s ease;
+    }
+
+    .dropdown-submenu.show > .dropdown-item.dropdown-toggle::after {
+        transform: rotate(-90deg);
+    }
+}
+
 /* INFORMACIÓN DE ENVÍOS */
 
 .shipping-info {
