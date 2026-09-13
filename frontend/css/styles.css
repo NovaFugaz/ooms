@@ -749,7 +749,6 @@ button,input,select,textarea {
 .form-control:focus,
 .form-select:focus {
     border-color: var(--wizard-gold);
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
 }
 
 .form-label {
