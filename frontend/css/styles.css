@@ -531,6 +531,7 @@ button,input,select,textarea {
     letter-spacing: 2px;
 }
 
+.section-heading h1,
 .section-heading h2 {
     margin-bottom: 10px;
     color: var(--primary);
@@ -853,6 +854,47 @@ button,input,select,textarea {
     color: var(--forest-moss);
 }
 
+
+/* CONTACTO */
+
+.social-links-light a {
+    border-color: rgba(62, 39, 35, 0.15);
+    color: var(--forest-moss);
+}
+
+.social-links-light a:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--wizard-gold);
+}
+
+.contact-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 20px 0 28px;
+    padding: 0;
+    list-style: none;
+}
+
+.contact-info-list li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.contact-info-list i {
+    flex-shrink: 0;
+    width: 22px;
+    color: var(--wizard-gold);
+    font-size: 1.15rem;
+    text-align: center;
+}
+
+.contact-info-list span {
+    color: var(--ink-brown);
+}
+
 /* FOOTER */
 
 .footer {
@@ -923,7 +965,7 @@ button,input,select,textarea {
     height: 36px;
     border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 50%;
-    color: var(--white);
+    color: var(--forest-moss);
     transition: all 0.2s ease;
 }
 
