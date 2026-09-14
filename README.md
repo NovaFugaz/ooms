@@ -41,6 +41,13 @@ OOMS es una tienda web de juegos de mesa, TCG, accesorios, TTRPG y rompecabezas.
 - Gestión de estados y roles de usuarios.
 - Persistencia de productos y usuarios mediante `localStorage`.
 
+Cuenta demo para mostrar el panel administrativo:
+
+- Correo: `admin@ooms.cl`
+- Contraseña: `Admin123!`
+
+La cuenta se crea automáticamente en `ooms_users` si todavía no existe ningún usuario con rol administrador.
+
 ## Persistencia local
 
 El proyecto utiliza claves independientes para separar la información:
