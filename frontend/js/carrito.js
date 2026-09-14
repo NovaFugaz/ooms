@@ -326,9 +326,24 @@
 
     function handleCheckout() {
         if (!CartStorage.getCart().length) return;
+        if (!getCurrentSession()) {
+            showFeedback('Debes iniciar sesión para finalizar la compra.', 'error');
+            const loginPath = window.location.pathname.includes('/vista-usuario/') ? 'login.html' : 'vista-usuario/login.html';
+            window.setTimeout(() => { window.location.href = `${loginPath}?redirect=checkout`; }, 900);
+            return;
+        }
         window.alert('Compra simulada correctamente. Gracias por comprar en Out of Mana.');
         CartStorage.clearCart();
         renderCart();
+    }
+
+    function getCurrentSession() {
+        try {
+            const storedSession = localStorage.getItem('ooms_current_user') || sessionStorage.getItem('ooms_current_user');
+            return storedSession ? JSON.parse(storedSession) : null;
+        } catch (error) {
+            return null;
+        }
     }
 
     function showCatalogFeedback(message, type) {

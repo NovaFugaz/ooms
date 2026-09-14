@@ -21,6 +21,10 @@
                 showMessage(result.message, 'error');
                 return;
             }
+            if (params.get('redirect') === 'checkout') {
+                window.location.href = 'carrito.html';
+                return;
+            }
             window.location.href = result.user.role === 'admin' ? '../vista-admin/gestion-productos.html' : '../index.html';
         });
 
