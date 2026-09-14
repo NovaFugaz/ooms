@@ -159,7 +159,10 @@
         state.catalogProducts = state.products;
         bindCartEvents();
         bindCatalogEvents();
+        bindDetailEvents();
+        initializeSearchParams();
         renderCatalog();
+        renderDetail();
         renderCart();
     }
 
@@ -186,6 +189,21 @@
         if (category) category.addEventListener('change', renderCatalog);
     }
 
+    function bindDetailEvents() {
+        const detail = $('#productDetail');
+        if (detail) detail.addEventListener('click', handleCatalogAction);
+    }
+
+    function initializeSearchParams() {
+        const params = new URLSearchParams(window.location.search);
+        const search = $('#catalogSearch');
+        const category = $('#catalogCategory');
+        state.catalogCategoryParam = params.get('categoria') || '';
+        state.catalogSubcategoryParam = params.get('subcategoria') || '';
+        if (search && params.get('buscar')) search.value = params.get('buscar');
+        if (category && state.catalogCategoryParam) category.value = state.catalogCategoryParam;
+    }
+
     function handleCatalogAction(event) {
         const button = event.target.closest('[data-action="add-to-cart"]');
         if (!button) return;
@@ -200,11 +218,15 @@
         const catalog = $('#productList') || $('#catalogProductList');
         if (!catalog) return;
         const search = ($('#catalogSearch')?.value || '').trim().toLowerCase();
-        const category = $('#catalogCategory')?.value || '';
+        const category = $('#catalogCategory')?.value || state.catalogCategoryParam || '';
         const products = state.catalogProducts.filter((product) => {
             if (product.status === 'inactive') return false;
             const matchesSearch = !search || product.name.toLowerCase().includes(search) || product.sku.toLowerCase().includes(search);
-            return matchesSearch && (!category || product.category === category);
+            const matchesCategory = !category || normalizeSlug(product.category) === normalizeSlug(category);
+            const productSubcategory = normalizeSlug(product.subcategory);
+            const requestedSubcategory = normalizeSlug(state.catalogSubcategoryParam);
+            const matchesSubcategory = !requestedSubcategory || productSubcategory === requestedSubcategory || productSubcategory.includes(requestedSubcategory);
+            return matchesSearch && matchesCategory && matchesSubcategory;
         });
         catalog.innerHTML = products.length ? products.map(productCard).join('') : '<div class="catalog-empty"><i class="bi bi-box-seam"></i><h3>No hay productos disponibles</h3><p>Los productos creados desde administración aparecerán aquí.</p></div>';
         populateCatalogCategories();
@@ -222,13 +244,33 @@
             option.textContent = category;
             select.appendChild(option);
         });
-        select.value = categories.includes(selected) ? selected : '';
+        select.value = categories.includes(selected) ? selected : categories.find((category) => normalizeSlug(category) === normalizeSlug(state.catalogCategoryParam)) || '';
+    }
+
+    function normalizeSlug(value) {
+        return String(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     }
 
     function productCard(product) {
         const outOfStock = Number(product.stock) <= 0;
         const image = product.image ? `<img src="${escapeAttribute(product.image)}" alt="${escapeAttribute(product.name)}">` : '<i class="bi bi-box-seam"></i>';
-        return `<article class="col-md-6 col-xl-4"><div class="card product-card h-100"><div class="product-card-image">${image}</div><div class="card-body"><span class="category">${escapeHtml(product.category || 'Producto')}</span><h3 class="card-title">${escapeHtml(product.name)}</h3><p class="card-text">${escapeHtml(product.description || 'Producto disponible en Out of Mana.')}</p><div class="product-card-footer"><strong class="price">${currency.format(product.price)}</strong><button class="btn btn-gold btn-sm" type="button" data-action="add-to-cart" data-product-id="${escapeAttribute(product.id)}" ${outOfStock ? 'disabled' : ''}>${outOfStock ? 'Sin stock' : '<i class="bi bi-cart-plus"></i> Agregar'}</button></div></div></div></article>`;
+        return `<article class="col-md-6 col-xl-4"><div class="card product-card h-100"><div class="product-card-image">${image}</div><div class="card-body"><span class="category">${escapeHtml(product.category || 'Producto')}</span><h3 class="card-title">${escapeHtml(product.name)}</h3><p class="card-text">${escapeHtml(product.description || 'Producto disponible en Out of Mana.')}</p><div class="product-card-footer"><strong class="price">${currency.format(product.price)}</strong><div class="product-card-actions"><a class="btn btn-outline-dark btn-sm" href="detalle-producto.html?id=${encodeURIComponent(product.id)}" aria-label="Ver detalle de ${escapeAttribute(product.name)}"><i class="bi bi-eye"></i></a><button class="btn btn-gold btn-sm" type="button" data-action="add-to-cart" data-product-id="${escapeAttribute(product.id)}" ${outOfStock ? 'disabled' : ''}>${outOfStock ? 'Sin stock' : '<i class="bi bi-cart-plus"></i> Agregar'}</button></div></div></div></div></article>`;
+    }
+
+    function renderDetail() {
+        const detail = $('#productDetail');
+        if (!detail) return;
+        const productId = new URLSearchParams(window.location.search).get('id');
+        const product = state.products.find((item) => item.id === productId && item.status !== 'inactive');
+        if (!product) {
+            detail.hidden = true;
+            $('#productDetailEmpty').hidden = false;
+            return;
+        }
+        const image = product.image ? `<img src="${escapeAttribute(product.image)}" alt="${escapeAttribute(product.name)}">` : '<i class="bi bi-box-seam"></i>';
+        detail.innerHTML = `<div class="product-detail-image">${image}</div><div class="product-detail-content"><span class="category">${escapeHtml(product.category)}</span><h1>${escapeHtml(product.name)}</h1><p class="product-detail-description">${escapeHtml(product.description || 'Producto disponible en Out of Mana.')}</p><div class="product-detail-meta"><span>SKU: ${escapeHtml(product.sku)}</span><span>Idioma: ${escapeHtml(product.language || 'No especificado')}</span><span>Stock disponible: ${product.stock}</span></div><strong class="product-detail-price">${currency.format(product.price)}</strong><button class="btn btn-gold" type="button" data-action="add-to-cart" data-product-id="${escapeAttribute(product.id)}" ${product.stock <= 0 ? 'disabled' : ''}><i class="bi bi-cart-plus"></i> ${product.stock <= 0 ? 'Sin stock' : 'Agregar al carrito'}</button><a class="back-to-catalog" href="productos.html"><i class="bi bi-arrow-left"></i> Volver al catálogo</a></div>`;
+        detail.hidden = false;
+        $('#productDetailEmpty').hidden = true;
     }
 
     function renderCart() {
