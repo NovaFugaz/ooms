@@ -56,6 +56,7 @@
 .status-badge, .stock-badge { display: inline-block; padding: 4px 7px; border-radius: 12px; font-size: .68rem; font-weight: 700; white-space: nowrap; }
 .status-active, .stock-ok { background: #e5f0de; color: #4c702d; }
 .status-inactive { background: #ece9e5; color: #70685f; }
+.status-blocked { background: #f7ded9; color: #9a392d; }
 .stock-low { background: #fff0ce; color: #8b6910; }
 .stock-empty { background: #f7ded9; color: #9a392d; }
 .table-action { display: inline-grid; place-items: center; width: 30px; height: 30px; margin-left: 4px; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--primary); cursor: pointer; }
@@ -65,6 +66,16 @@
 .empty-state i { font-size: 2.3rem; color: var(--forest-moss); }
 .empty-state h3 { margin: 12px 0 5px; color: var(--primary); font-size: 1rem; }
 .empty-state p { margin: 0; font-size: .85rem; }
+.user-admin-layout { grid-template-columns: minmax(280px, .78fr) minmax(500px, 1.5fr); }
+.user-name-cell { display: flex; align-items: center; gap: 10px; min-width: 190px; }
+.user-avatar { display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; background: rgba(95,122,58,.16); color: var(--forest-moss); font-size: .75rem; font-weight: 800; }
+.user-name-cell strong, .user-name-cell small, .user-contact { display: block; }
+.user-name-cell strong { color: var(--primary); font-size: .82rem; }
+.user-name-cell small, .user-contact { color: rgba(62,39,35,.58); font-size: .72rem; }
+.user-email { display: block; max-width: 190px; overflow: hidden; color: var(--primary); text-overflow: ellipsis; white-space: nowrap; }
+.role-badge { display: inline-block; padding: 4px 7px; border-radius: 12px; font-size: .68rem; font-weight: 700; white-space: nowrap; }
+.role-admin { background: rgba(212,175,55,.25); color: #806315; }
+.role-customer { background: rgba(48,102,125,.12); color: #30667d; }
 .admin-footer { padding: 22px 0 12px; }
 .admin-footer .footer-bottom { padding-top: 0; border-top: 0; }
 @media (max-width: 992px) { .admin-layout { grid-template-columns: 1fr; } .admin-stats { grid-template-columns: repeat(2, 1fr); } }
