@@ -46,7 +46,7 @@
         },
         {
             id: 'base-pokemon-tcg',
-            name: 'Pokémon TCG - Colección',
+            name: 'Pokémon TCG - 60 cartas al azar',
             sku: 'TCG-001',
             category: 'TCG',
             subcategory: 'Pokémon',
@@ -55,12 +55,12 @@
             minStock: 3,
             language: 'Español',
             image: 'https://upload.wikimedia.org/wikipedia/commons/c/c1/Pokemon_collection.jpg',
-            description: 'Cartas y accesorios para ampliar tu colección Pokémon.',
+            description: 'Cartas y accesorios para comenzar o ampliar tu colección Pokémon.',
             status: 'active'
         },
         {
             id: 'base-magic-commander',
-            name: 'Magic: The Gathering Commander',
+            name: 'Mazo Commander Magic: The Gathering - Arm for Battle',
             sku: 'TCG-002',
             category: 'TCG',
             subcategory: 'Magic: The Gathering',
@@ -68,13 +68,13 @@
             stock: 4,
             minStock: 2,
             language: 'Inglés',
-            image: 'https://upload.wikimedia.org/wikipedia/commons/7/78/Magic_the_Gathering_Commander_battlefield_example.jpg',
-            description: 'Formato multijugador para enfrentamientos épicos de Magic.',
+            image: 'https://static.wikia.nocookie.net/mtgsalvation_gamepedia/images/0/05/Arm_For_Battle.png/revision/latest?cb=20240225224556',
+            description: 'Mazo preconstruido para comenzar tu aventura en Magic: The Gathering.',
             status: 'active'
         },
         {
             id: 'base-dice-set',
-            name: 'Set de dados para rol',
+            name: 'Set de dados para juegos de rol',
             sku: 'ACC-001',
             category: 'Accesorios',
             subcategory: 'Dice sets',
@@ -83,7 +83,7 @@
             minStock: 4,
             language: 'Universal',
             image: 'https://upload.wikimedia.org/wikipedia/commons/8/85/DnD_Dice_Set.jpg',
-            description: 'Set poliédrico para tus partidas de rol.',
+            description: 'Set de dados para tus partidas de rol.',
             status: 'active'
         },
         {
@@ -102,7 +102,7 @@
         },
         {
             id: 'base-puzzle-1000',
-            name: 'Puzzle Palacio de Westminster 1000 piezas',
+            name: 'Rompecabezas Palacio de Westminster de 1000 piezas',
             sku: 'PZL-001',
             category: 'Rompecabezas',
             subcategory: '1000 piezas',
@@ -116,21 +116,21 @@
         },
         {
             id: 'base-puzzle-table',
-            name: 'Puzzle en proceso',
+            name: 'Rompecabezas Ravensburger de 1000 piezas',
             sku: 'PZL-002',
             category: 'Rompecabezas',
-            subcategory: '500 piezas',
+            subcategory: '1000 piezas',
             price: 10990,
             stock: 11,
             minStock: 3,
             language: 'Universal',
-            image: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Jigsaw_puzzle_in_progress.jpg',
-            description: 'Una experiencia clásica para compartir o disfrutar a solas.',
+            image: 'https://ss424.liverpool.com.mx/xl/1090890022.jpg',
+            description: 'Rompecabezas Ravensburger de 1000 piezas.',
             status: 'active'
         },
         {
             id: 'base-magic-card',
-            name: 'Magic: The Gathering - Carta coleccionable',
+            name: 'Magic: The Gathering - Singles',
             sku: 'TCG-003',
             category: 'TCG',
             subcategory: 'Magic: The Gathering',
@@ -139,7 +139,7 @@
             minStock: 5,
             language: 'Inglés',
             image: 'https://upload.wikimedia.org/wikipedia/commons/c/c5/A_Magic_the_Gathering_proxy_card_of_Cuombajj_Witches_in_a_collage_style.png',
-            description: 'Carta para construir y personalizar tu mazo.',
+            description: 'Revisa singles para mejorar tus mazos o completar tu colección.',
             status: 'active'
         }
     ];
@@ -154,6 +154,8 @@
         if (!storedProducts.length) {
             ProductStorage.saveProducts(BASE_PRODUCTS);
             storedProducts = ProductStorage.getProducts();
+        } else {
+            storedProducts = synchronizeBaseProducts(storedProducts);
         }
         state.products = storedProducts;
         state.catalogProducts = state.products;
@@ -164,6 +166,19 @@
         renderCatalog();
         renderDetail();
         renderCart();
+    }
+
+    function synchronizeBaseProducts(products) {
+        const baseProducts = new Map(BASE_PRODUCTS.map((product) => [product.id, product]));
+        let changed = false;
+        const synchronizedProducts = products.map((product) => {
+            const baseProduct = baseProducts.get(product.id);
+            if (!baseProduct || (product.name === baseProduct.name && product.description === baseProduct.description && product.image === baseProduct.image)) return product;
+            changed = true;
+            return { ...product, name: baseProduct.name, description: baseProduct.description, image: baseProduct.image };
+        });
+        if (changed) ProductStorage.saveProducts(synchronizedProducts);
+        return synchronizedProducts;
     }
 
     function bindCartEvents() {
