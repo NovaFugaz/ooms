@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    const STORAGE_KEYS = { products: 'ooms_products', users: 'ooms_users' };
+    const STORAGE_KEYS = { products: 'ooms_products', users: 'ooms_users', cart: 'ooms_cart' };
 
     function readProducts() {
         try {
@@ -29,6 +29,20 @@
 
     function writeUsers(users) {
         localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
+    }
+
+    function readCart() {
+        try {
+            const storedCart = localStorage.getItem(STORAGE_KEYS.cart);
+            return storedCart ? JSON.parse(storedCart) : [];
+        } catch (error) {
+            console.error('No se pudo leer el carrito.', error);
+            return [];
+        }
+    }
+
+    function writeCart(cart) {
+        localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify(cart));
     }
 
     function createId() {
@@ -106,6 +120,51 @@
             const filteredUsers = users.filter((item) => item.id !== id);
             writeUsers(filteredUsers);
             return filteredUsers.length !== users.length;
+        }
+    };
+
+    window.CartStorage = {
+        getCart: readCart,
+        saveCart: writeCart,
+        addItem(product, quantity = 1) {
+            const cart = readCart();
+            const existingItem = cart.find((item) => item.productId === product.id);
+            const nextQuantity = (existingItem ? existingItem.quantity : 0) + quantity;
+            const stock = Number.isFinite(product.stock) ? product.stock : Number.MAX_SAFE_INTEGER;
+            if (nextQuantity > stock) return { ok: false, reason: 'stock' };
+            if (existingItem) {
+                existingItem.quantity = nextQuantity;
+            } else {
+                cart.push({ productId: product.id, name: product.name, price: product.price, image: product.image || '', stock, quantity });
+            }
+            writeCart(cart);
+            return { ok: true, cart };
+        },
+        updateQuantity(productId, quantity) {
+            const cart = readCart();
+            const item = cart.find((cartItem) => cartItem.productId === productId);
+            if (!item) return { ok: false, reason: 'not-found' };
+            const nextQuantity = Math.floor(Number(quantity));
+            if (!Number.isInteger(nextQuantity) || nextQuantity < 1) return { ok: false, reason: 'quantity' };
+            if (nextQuantity > item.stock) return { ok: false, reason: 'stock' };
+            item.quantity = nextQuantity;
+            writeCart(cart);
+            return { ok: true, cart };
+        },
+        removeItem(productId) {
+            const cart = readCart().filter((item) => item.productId !== productId);
+            writeCart(cart);
+            return cart;
+        },
+        clearCart() {
+            writeCart([]);
+            return [];
+        },
+        getItemCount() {
+            return readCart().reduce((total, item) => total + item.quantity, 0);
+        },
+        getTotal() {
+            return readCart().reduce((total, item) => total + item.price * item.quantity, 0);
         }
     };
 }());
