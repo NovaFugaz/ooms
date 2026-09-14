@@ -17,18 +17,28 @@
         localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(products));
     }
 
-    function readUsers() {
-        try {
-            const storedUsers = localStorage.getItem(STORAGE_KEYS.users);
-            return storedUsers ? JSON.parse(storedUsers) : [];
-        } catch (error) {
-            console.error('No se pudieron leer los usuarios.', error);
-            return [];
-        }
-    }
+    const DEMO_ADMIN = {
+        id: 'demo-admin', name: 'Administrador', lastName: 'OOMS', email: 'admin@ooms.cl',
+        phone: '', city: '', password: 'Admin123!', role: 'admin', status: 'active',
+        createdAt: '2026-09-13T00:00:00.000Z', updatedAt: '2026-09-13T00:00:00.000Z'
+    };
 
     function writeUsers(users) {
         localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
+    }
+
+    function readUsers() {
+        try {
+            const storedUsers = localStorage.getItem(STORAGE_KEYS.users);
+            const users = storedUsers ? JSON.parse(storedUsers) : [];
+            if (users.some((user) => user.role === 'admin')) return users;
+            const usersWithAdmin = [DEMO_ADMIN, ...users];
+            writeUsers(usersWithAdmin);
+            return usersWithAdmin;
+        } catch (error) {
+            console.error('No se pudieron leer los usuarios.', error);
+            return [DEMO_ADMIN];
+        }
     }
 
     function readCart() {

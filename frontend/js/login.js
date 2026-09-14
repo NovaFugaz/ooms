@@ -21,7 +21,7 @@
                 showMessage(result.message, 'error');
                 return;
             }
-            window.location.href = '../index.html';
+            window.location.href = result.user.role === 'admin' ? '../vista-admin/gestion-productos.html' : '../index.html';
         });
 
         function showMessage(message, type) {
