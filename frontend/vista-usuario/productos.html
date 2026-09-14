@@ -155,6 +155,20 @@
         </nav>
     </header>
 
+    <main class="container catalog-page">
+        <div class="section-heading">
+            <span>CATÁLOGO</span>
+            <h1>Todos los productos</h1>
+            <p>Encuentra juegos, TCG y accesorios para tu próxima partida.</p>
+        </div>
+        <div class="catalog-toolbar-public">
+            <div class="input-group"><span class="input-group-text"><i class="bi bi-search"></i></span><input class="form-control" id="catalogSearch" type="search" placeholder="Buscar productos..." aria-label="Buscar productos"></div>
+            <select class="form-select" id="catalogCategory" aria-label="Filtrar por categoría"><option value="">Todas las categorías</option></select>
+        </div>
+        <div id="catalogFeedback" class="catalog-feedback" role="status" aria-live="polite"></div>
+        <div id="catalogProductList" class="row g-4"></div>
+    </main>
+
         <div class="offcanvas offcanvas-end cart-offcanvas" tabindex="-1" id="cartOffcanvas"
         aria-labelledby="cartOffcanvasLabel">
 
@@ -242,6 +256,8 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/carrito.js"></script>
 </body>
 
 </html>
