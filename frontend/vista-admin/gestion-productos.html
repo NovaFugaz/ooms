@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Panel Admin - Gestión de productos</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="../css/styles.css">
+	<link rel="stylesheet" href="../css/admin.css">
+</head>
+
+<body class="admin-page">
+	<header class="admin-header">
+		<div class="container admin-header-content">
+			<a href="../index.html" class="logo">
+				<span class="logo-icon"><img src="../img/logo.webp" alt="Out of Mana"></span>
+				<span class="logo-text"><span class="logo-title">Out of Mana</span><span class="logo-subtitle">PANEL ADMINISTRATIVO</span></span>
+			</a>
+			<div class="admin-header-actions"><span class="admin-user"><i class="bi bi-person-circle"></i> Administrador</span><a class="btn btn-outline-light btn-sm" href="../index.html"><i class="bi bi-shop"></i> Ver tienda</a></div>
+		</div>
+	</header>
+
+	<main class="container admin-main">
+		<div class="admin-heading">
+			<div><p class="admin-eyebrow">CATÁLOGO</p><h1>Gestión de productos</h1><p class="admin-description">Administra el inventario y la información visible en la tienda.</p></div>
+			<button class="btn btn-gold" type="button" id="newProductButton"><i class="bi bi-plus-lg"></i> Nuevo producto</button>
+		</div>
+
+		<section class="admin-stats" aria-label="Resumen del catálogo">
+			<article class="admin-stat"><span class="stat-icon"><i class="bi bi-box-seam"></i></span><div><span>Total productos</span><strong id="totalProducts">0</strong></div></article>
+			<article class="admin-stat"><span class="stat-icon stat-icon-green"><i class="bi bi-check-circle"></i></span><div><span>Productos activos</span><strong id="activeProducts">0</strong></div></article>
+			<article class="admin-stat"><span class="stat-icon stat-icon-red"><i class="bi bi-exclamation-triangle"></i></span><div><span>Stock bajo</span><strong id="lowStockProducts">0</strong></div></article>
+			<article class="admin-stat"><span class="stat-icon stat-icon-blue"><i class="bi bi-tags"></i></span><div><span>Categorías</span><strong id="categoryCount">0</strong></div></article>
+		</section>
+
+		<div id="feedback" class="admin-feedback" role="status" aria-live="polite"></div>
+
+		<section class="admin-layout">
+			<article class="admin-panel product-form-panel">
+				<div class="panel-heading"><div><p class="admin-eyebrow">INFORMACIÓN</p><h2 id="formTitle">Nuevo producto</h2></div><button type="button" class="icon-button" id="resetFormButton" title="Limpiar formulario" aria-label="Limpiar formulario"><i class="bi bi-arrow-counterclockwise"></i></button></div>
+				<form id="productForm" novalidate>
+					<input type="hidden" id="productId">
+					<div class="form-section"><h3>Datos principales</h3><div class="row g-3">
+						<div class="col-12"><label class="form-label" for="productName">Nombre del producto *</label><input class="form-control" id="productName" required maxlength="100"></div>
+						<div class="col-md-6"><label class="form-label" for="productSku">SKU *</label><input class="form-control" id="productSku" required maxlength="30"></div>
+						<div class="col-md-6"><label class="form-label" for="productStatus">Estado *</label><select class="form-select" id="productStatus"><option value="active">Activo</option><option value="inactive">Inactivo</option></select></div>
+						<div class="col-md-6"><label class="form-label" for="productCategory">Categoría *</label><select class="form-select" id="productCategory" required><option value="">Seleccionar categoría</option><option>Juegos de mesa</option><option>TCG</option><option>Accesorios</option><option>TTRPG</option><option>Rompecabezas</option></select></div>
+						<div class="col-md-6"><label class="form-label" for="productSubcategory">Subcategoría</label><input class="form-control" id="productSubcategory" maxlength="60"></div>
+					</div></div>
+					<div class="form-section"><h3>Inventario y precio</h3><div class="row g-3">
+						<div class="col-md-4"><label class="form-label" for="productPrice">Precio (CLP) *</label><input class="form-control" id="productPrice" type="number" min="0" step="1" required></div>
+						<div class="col-md-4"><label class="form-label" for="productStock">Stock actual *</label><input class="form-control" id="productStock" type="number" min="0" step="1" required></div>
+						<div class="col-md-4"><label class="form-label" for="productMinStock">Stock mínimo</label><input class="form-control" id="productMinStock" type="number" min="0" step="1" value="3"></div>
+						<div class="col-md-6"><label class="form-label" for="productLanguage">Idioma</label><input class="form-control" id="productLanguage" value="Español"></div>
+						<div class="col-md-6"><label class="form-label" for="productReleaseDate">Fecha de lanzamiento</label><input class="form-control" id="productReleaseDate" type="date"></div>
+					</div></div>
+					<div class="form-section"><h3>Contenido</h3><div class="mb-3"><label class="form-label" for="productImage">URL de imagen</label><input class="form-control" id="productImage" type="url" placeholder="https://..."></div><div><label class="form-label" for="productDescription">Descripción</label><textarea class="form-control" id="productDescription" rows="4" maxlength="500"></textarea></div></div>
+					<div class="form-actions"><button class="btn btn-outline-secondary" type="button" id="cancelEditButton">Cancelar</button><button class="btn btn-dark" type="submit"><i class="bi bi-check-lg"></i> <span id="submitLabel">Guardar producto</span></button></div>
+				</form>
+			</article>
+
+			<article class="admin-panel catalog-panel"><div class="panel-heading"><div><p class="admin-eyebrow">INVENTARIO</p><h2>Productos registrados</h2></div><span class="product-count" id="productCountLabel">0 productos</span></div><div class="catalog-toolbar"><div class="input-group"><span class="input-group-text"><i class="bi bi-search"></i></span><input class="form-control" id="productSearch" type="search" placeholder="Buscar por nombre o SKU"></div><select class="form-select" id="categoryFilter" aria-label="Filtrar por categoría"><option value="">Todas las categorías</option></select><select class="form-select" id="statusFilter" aria-label="Filtrar por estado"><option value="">Todos los estados</option><option value="active">Activos</option><option value="inactive">Inactivos</option></select></div><div class="table-responsive"><table class="table admin-table"><thead><tr><th>Producto</th><th>SKU</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Estado</th><th class="text-end">Acciones</th></tr></thead><tbody id="productsTableBody"></tbody></table></div><div class="empty-state" id="emptyState" hidden><i class="bi bi-inbox"></i><h3>No hay productos</h3><p>Agrega el primer producto o cambia los filtros.</p></div></article>
+		</section>
+	</main>
+
+	<footer class="footer admin-footer"><div class="container"><div class="footer-bottom"><p>© 2026 Out of Mana. Panel administrativo.</p></div></div></footer>
+	<script src="../js/storage.js"></script>
+	<script src="../js/admin-productos.js"></script>
+</body>
+</html>
